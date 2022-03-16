@@ -825,6 +825,7 @@ nvim_eval_statusline({str}, {*opts})                  *nvim_eval_statusline()*
                             • maxwidth: (number) Maximum width of statusline.
                             • fillchar: (string) Character to fill blank
                               spaces in the statusline (see 'fillchars').
+                              Treated as single-width even if it isn't.
                             • highlights: (boolean) Return highlight
                               information.
                             • use_tabline: (boolean) Evaluate tabline instead
@@ -1546,19 +1547,25 @@ nvim_set_current_win({window})                        *nvim_set_current_win()*
 nvim_set_hl({ns_id}, {name}, {*val})                           *nvim_set_hl()*
                 Sets a highlight group.
 
+                Note: Unlike the `:highlight` command which can update a highlight group, this function
+                completely replaces the definition. For example: nvim_set_hl(0, 'Visual , {}) will clear the highlight group 'Visual .
+
                 Parameters: ~
-                    {ns_id}  Namespace id for this highlight |nvim_create_namespace()|.
-                             Use 0 to set a highlight group globally |:highlight|.
+                    {ns_id}  Namespace id for this highlight
+                             |nvim_create_namespace()|. Use 0 to set a
+                             highlight group globally |:highlight|.
                     {name}   Highlight group name, e.g. "ErrorMsg"
                     {val}    Highlight definition map, like |synIDattr()|. In
                              addition, the following keys are recognized:
-                             • default: Don't override existing definition |:hi-default|
-                             • ctermfg: Sets foreground of cterm color |highlight-ctermfg|
-                             • ctermbg: Sets background of cterm color |highlight-ctermbg|
+                             • default: Don't override existing definition
+                               |:hi-default|
+                             • ctermfg: Sets foreground of cterm color
+                               |highlight-ctermfg|
+                             • ctermbg: Sets background of cterm color
+                               |highlight-ctermbg|
                              • cterm: cterm attribute map, like
-                               |highlight-args|.
-                               Note: Attributes default to those set for `gui`
-                                     if not set.
+                               |highlight-args|. Note: Attributes default to
+                               those set for `gui` if not set.
 
 nvim_set_keymap({mode}, {lhs}, {rhs}, {*opts})             *nvim_set_keymap()*
                 Sets a global |mapping| for the given mode.
@@ -1932,7 +1939,7 @@ nvim_buf_attach({buffer}, {send_buffer}, {opts})           *nvim_buf_attach()*
                                    • on_reload: Lua callback invoked on
                                      reload. The entire buffer content should
                                      be considered changed. Args:
-                                     • the string "detach"
+                                     • the string "reload"
                                      • buffer handle
 
                                    • utf_sizes: include UTF-32 and UTF-16 size
@@ -2577,6 +2584,28 @@ nvim_buf_set_extmark({buffer}, {ns_id}, {line}, {col}, {*opts})
                                 not be placed if the line or column value is
                                 past the end of the buffer or end of the line
                                 respectively. Defaults to true.
+                              • sign_text: string of length 1-2 used to
+                                display in the sign column. Note: ranges are
+                                unsupported and decorations are only applied
+                                to start_row
+                              • sign_hl_group: name of the highlight group
+                                used to highlight the sign column text. Note:
+                                ranges are unsupported and decorations are
+                                only applied to start_row
+                              • number_hl_group: name of the highlight group
+                                used to highlight the number column. Note:
+                                ranges are unsupported and decorations are
+                                only applied to start_row
+                              • line_hl_group: name of the highlight group
+                                used to highlight the whole line. Note: ranges
+                                are unsupported and decorations are only
+                                applied to start_row
+                              • cursorline_hl_group: name of the highlight
+                                group used to highlight the line when the
+                                cursor is on the same line as the mark and
+                                'cursorline' is enabled. Note: ranges are
+                                unsupported and decorations are only applied
+                                to start_row
 
                 Return: ~
                     Id of the created/updated extmark
@@ -2811,7 +2840,7 @@ nvim_win_set_buf({window}, {buffer})                      *nvim_win_set_buf()*
 
 nvim_win_set_cursor({window}, {pos})                   *nvim_win_set_cursor()*
                 Sets the (1,0)-indexed cursor position in the window.
-                |api-indexing|
+                |api-indexing| Unlike |win_execute()| this scrolls the window.
 
                 Parameters: ~
                     {window}  Window handle, or 0 for current window
